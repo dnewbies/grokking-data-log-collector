@@ -1,0 +1,11 @@
+{
+  "name": "grokking-data-log-collector",
+  "version": "0.0.1",
+  "description": "grokking-data-log-collector",
+  "main": "server.js",
+  "author": "leanhdaovn",
+  "license": "ISC",
+  "dependencies": {
+    "httpdispatcher": "^1.0.0"
+  }
+}
