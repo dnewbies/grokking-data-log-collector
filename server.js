@@ -29,6 +29,7 @@ const handleRequest = (request, response) => {
     try {
         const queryParams = url.parse(request.url, true).query;
         insertLogs(queryParams);
+        console.log(Object.prototype.toString.call(queryParams));
         dispatcher.dispatch(request, response);
     } catch (e) {
         console.error(e);
