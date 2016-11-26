@@ -9,6 +9,7 @@
     "bluebird": "^3.4.6",
     "httpdispatcher": "^1.0.0",
     "nodemon": "^1.11.0",
-    "pg-promise": "^5.3.5"
+    "pg-promise": "^5.3.5",
+    "ua-parser-js": "^0.7.12"
   }
 }
