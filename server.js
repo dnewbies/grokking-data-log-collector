@@ -5,42 +5,42 @@ const promise = require('bluebird');
 const options = { promiseLib: promise };
 const pgp = require('pg-promise')(options);
 const parser = require('ua-parser-js');
+const express = require('express');
+const request = require('request');
+const bodyParser = require('body-parser');
+const app = express();
+
+const jsonParser = bodyParser.json();
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const cn = 'postgres://postgres:123456@61.28.227.201:5432/dw?ssl=true';
 var db = pgp(cn);
 
-const PORT = 8080;
 
-dispatcher.setStatic('resources');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-dispatcher.onGet('/logs', (req, res) => {
+app.set('port', (process.env.PORT || 8080));
 
-    res.writeHead(200, { 'Content-type': 'application/json' });
-    var json = JSON.stringify({
-        message: 'Insert Logs Success'
+app.listen(app.get('port'), function() {
+    console.log('Server start at port : ', app.get('port'));
+});
+
+app.get('/logs', function(req, res) {
+    if (!req.body) return res.sendStatus(400);
+
+    var user_agent = parser(req.headers['user-agent']);
+
+    insertLogs(req.params, user_agent);
+
+        res.json({
+            status: 200,
+            body: {
+                message: 'Insert Logs Success'
+            }
     });
-    res.end(json);
 });
 
-dispatcher.onPost('/post1', (req, res) => {
-    res.writeHead(200, { 'Content-type': 'text/plain' });
-    res.end('Got post data');
-});
-
-const handleRequest = (request, response) => {
-    try {
-        const queryParams = url.parse(request.url, true).query;
-        var user_agent = parser(request.headers['user-agent']);
-        insertLogs(queryParams, user_agent);
-        dispatcher.dispatch(request, response);
-    } catch (e) {
-        console.error(e);
-    } finally {
-
-    }
-};
-
-// ===========================
 function insertLogs(logBody, user_agent) {
     ts = new Date();
     var body = {
@@ -51,18 +51,12 @@ function insertLogs(logBody, user_agent) {
         }
     };
 
-    db.none('insert into logs.events_write(ts, body)' +
+    db.one('insert into logs.events_write(ts, body)' +
             'values(${ts}, ${body})', body)
-        .then(function() {
-
+        .then(function(data) {
+            console.log(data);
         })
         .catch(function(err) {
             console.log(err);
         });
 }
-
-const server = http.createServer(handleRequest);
-
-server.listen(PORT, () => {
-    console.log('Server listening on http://localhost:%s', PORT);
-});

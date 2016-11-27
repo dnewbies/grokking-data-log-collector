@@ -7,9 +7,13 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.4.6",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
     "httpdispatcher": "^1.0.0",
     "nodemon": "^1.11.0",
     "pg-promise": "^5.3.5",
-    "ua-parser-js": "^0.7.12"
+    "request": "^2.79.0",
+    "ua-parser-js": "^0.7.12",
+    "user-agent": "^1.0.4"
   }
 }
