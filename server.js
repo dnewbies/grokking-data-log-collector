@@ -30,7 +30,7 @@ app.get('/logs', function(req, res) {
     if (!req.body) return res.sendStatus(400);
 
     var user_agent = parser(req.headers['user-agent']);
-    insertLogs(req.params, user_agent, function(data) {
+    insertLogs(req.query, user_agent, function(data) {
       res.status(200)
           .json({
               message: 'Insert Logs Success'
@@ -47,7 +47,6 @@ function insertLogs(logBody, user_agent, callback) {
             user_agent: user_agent
         }
     };
-
     db.none('insert into logs.events_write(ts, body)' +
             'values(${ts}, ${body})', body)
         .then(function(data) {

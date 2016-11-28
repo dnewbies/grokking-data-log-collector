@@ -1,10 +1,10 @@
-CREATE TABLE ping (ping_id integer, the_date date);
+CREATE TABLE log (log_id integer, ts date);
 
-CREATE OR REPLACE FUNCTION trg_ping_partition()
+CREATE OR REPLACE FUNCTION trg_log_partition()
   RETURNS TRIGGER AS
 $func$
 DECLARE
-   _tbl text := to_char(NEW.the_date, '"ping_"YYYY_DDD_') || NEW.ping_id;
+   _tbl text := to_char(NEW.ts, '"log_"YYYY_DDD_') || NEW.log_id;
 BEGIN
    IF NOT EXISTS (
       SELECT 1
@@ -14,11 +14,11 @@ BEGIN
       AND    c.relname = _tbl
       AND    c.relkind = 'r') THEN
 
-      EXECUTE format('CREATE TABLE %I (CHECK (the_date >= %L AND
-                                              the_date <  %L)) INHERITS (ping)'
+      EXECUTE format('CREATE TABLE %I (CHECK (ts >= %L AND
+                                              ts <  %L)) INHERITS (prod.log)'
               , _tbl
-              , to_char(NEW.the_date,     'YYYY-MM-DD')
-              , to_char(NEW.the_date + 1, 'YYYY-MM-DD')
+              , to_char(NEW.ts,     'YYYY-MM-DD')
+              , to_char(NEW.ts + 1, 'YYYY-MM-DD')
               );
    END IF;
 
@@ -30,5 +30,5 @@ END
 $func$ LANGUAGE plpgsql SET search_path = public;
 
 CREATE TRIGGER insbef
-BEFORE INSERT ON ping
-FOR EACH ROW EXECUTE PROCEDURE trg_ping_partition();
+BEFORE INSERT ON log
+FOR EACH ROW EXECUTE PROCEDURE trg_log_partition();
