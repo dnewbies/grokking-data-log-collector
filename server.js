@@ -30,18 +30,15 @@ app.get('/logs', function(req, res) {
     if (!req.body) return res.sendStatus(400);
 
     var user_agent = parser(req.headers['user-agent']);
-
-    insertLogs(req.params, user_agent);
-
-        res.json({
-            status: 200,
-            body: {
-                message: 'Insert Logs Success'
-            }
+    insertLogs(req.params, user_agent, function(data) {
+      res.status(200)
+          .json({
+              message: 'Insert Logs Success'
+          });
     });
 });
 
-function insertLogs(logBody, user_agent) {
+function insertLogs(logBody, user_agent, callback) {
     ts = new Date();
     var body = {
         ts: ts,
@@ -51,10 +48,10 @@ function insertLogs(logBody, user_agent) {
         }
     };
 
-    db.one('insert into logs.events_write(ts, body)' +
+    db.none('insert into logs.events_write(ts, body)' +
             'values(${ts}, ${body})', body)
         .then(function(data) {
-            console.log(data);
+          return callback(data);
         })
         .catch(function(err) {
             console.log(err);
