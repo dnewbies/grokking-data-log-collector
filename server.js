@@ -27,7 +27,7 @@ app.listen(app.get('port'), function() {
 });
 
 app.get('/logs', function(req, res) {
-    console.log(body);
+    console.log(req.query);
 
     var user_agent = parser(req.headers['user-agent']);
     insertLogs(req.query, user_agent, function(data) {
