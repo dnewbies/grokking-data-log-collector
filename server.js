@@ -27,7 +27,7 @@ app.listen(app.get('port'), function() {
 });
 
 app.get('/logs', function(req, res) {
-    if (!req.body) return res.sendStatus(400);
+    console.log(body);
 
     var user_agent = parser(req.headers['user-agent']);
     insertLogs(req.query, user_agent, function(data) {
